@@ -1,6 +1,5 @@
 package net.fullstackproject.ems.service.impl;
 
-import lombok.AllArgsConstructor;
 import net.fullstackproject.ems.dto.EmployeeDto;
 import net.fullstackproject.ems.entity.Employee;
 import net.fullstackproject.ems.exception.ResourceNotFoundException;
@@ -59,5 +58,13 @@ public class EmployeeServiceImpl implements EmployeeService {
     Employee updatedEmployeeObj =  employeeRepository.save(employee);
 
         return EmployeeMapper.mapToEmployeeDto(updatedEmployeeObj);
+    }
+
+    @Override
+    public void deleteEmployee(long employeeId) {
+        Employee employee = employeeRepository.findById(employeeId).orElseThrow(
+                () -> new ResourceNotFoundException("Employee is not exist with given id : " + employeeId)
+        );
+        employeeRepository.deleteById(employeeId);
     }
 }
