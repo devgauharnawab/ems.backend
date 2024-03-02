@@ -9,13 +9,14 @@ import net.fullstackproject.ems.service.EmployeeService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
+//import java.util.stream.Collectors;
 
 
 @Service //this annotation tells spring container to create the spring Bean of this class
 public class EmployeeServiceImpl implements EmployeeService {
 
-    private EmployeeRepository employeeRepository;
+    private  EmployeeRepository employeeRepository;
+
 
     public EmployeeServiceImpl(EmployeeRepository employeeRepository) {
         this.employeeRepository = employeeRepository;
@@ -25,7 +26,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     public EmployeeDto createEmployee(EmployeeDto employeeDto) {
 
         Employee employee = EmployeeMapper.mapToEmployee(employeeDto);
-       Employee savedEmployee =  employeeRepository.save(employee);
+        Employee savedEmployee =  employeeRepository.save(employee);
 
         return EmployeeMapper.mapToEmployeeDto(savedEmployee);
     }
@@ -38,12 +39,21 @@ public class EmployeeServiceImpl implements EmployeeService {
          return EmployeeMapper.mapToEmployeeDto(employee);
     }
 
+//    @Override
+//    public List<EmployeeDto> getAllEmployees() {
+//     List<Employee> employees =   employeeRepository.findAll();
+//        return employees.stream().map((employee) -> EmployeeMapper.mapToEmployeeDto(employee))
+//                .collect(Collectors.toList());
+//    }
+
     @Override
     public List<EmployeeDto> getAllEmployees() {
-     List<Employee> employees =   employeeRepository.findAll();
-        return employees.stream().map((employee) -> EmployeeMapper.mapToEmployeeDto(employee))
-                .collect(Collectors.toList());
+        List<Employee> employees = employeeRepository.findAll();
+        return employees.stream()
+                .map(EmployeeMapper::mapToEmployeeDto)
+                .toList();
     }
+
 
     @Override
     public EmployeeDto updateEmployee(long employeeId, EmployeeDto updatedEmployee) {
@@ -66,5 +76,6 @@ public class EmployeeServiceImpl implements EmployeeService {
                 () -> new ResourceNotFoundException("Employee is not exist with given id : " + employeeId)
         );
         employeeRepository.deleteById(employeeId);
+
     }
 }

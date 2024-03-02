@@ -3,7 +3,6 @@ package net.fullstackproject.ems.controller;
 import lombok.AllArgsConstructor;
 import net.fullstackproject.ems.dto.EmployeeDto;
 import net.fullstackproject.ems.service.EmployeeService;
-import org.springframework.boot.ApplicationRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 //this class to handle Http request
+// * means all the clients can be able to called rest api
+@CrossOrigin("*")
 @AllArgsConstructor
 @RestController
 @RequestMapping("/api/employees")
