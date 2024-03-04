@@ -1,11 +1,13 @@
 package net.fullstackproject.ems.service.impl;
 
+import jakarta.annotation.PostConstruct;
 import net.fullstackproject.ems.dto.EmployeeDto;
 import net.fullstackproject.ems.entity.Employee;
 import net.fullstackproject.ems.exception.ResourceNotFoundException;
 import net.fullstackproject.ems.mapper.EmployeeMapper;
 import net.fullstackproject.ems.repository.EmployeeRepository;
 import net.fullstackproject.ems.service.EmployeeService;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,13 +20,15 @@ public class EmployeeServiceImpl implements EmployeeService {
     private  EmployeeRepository employeeRepository;
 
 
-    public EmployeeServiceImpl(EmployeeRepository employeeRepository) {
+    public EmployeeServiceImpl(EmployeeRepository employeeRepository,JdbcTemplate jdbcTemplate) {
         this.employeeRepository = employeeRepository;
     }
+
 
     @Override
     public EmployeeDto createEmployee(EmployeeDto employeeDto) {
 
+        System.out.println("Employee created!!!!");
         Employee employee = EmployeeMapper.mapToEmployee(employeeDto);
         Employee savedEmployee =  employeeRepository.save(employee);
 
@@ -72,10 +76,11 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public void deleteEmployee(long employeeId) {
+        System.out.println("Employee deleted!!!!");
+
         Employee employee = employeeRepository.findById(employeeId).orElseThrow(
                 () -> new ResourceNotFoundException("Employee is not exist with given id : " + employeeId)
         );
         employeeRepository.deleteById(employeeId);
-
     }
 }
