@@ -11,13 +11,14 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-//import java.util.stream.Collectors;
+import java.util.stream.Collectors;
 
 
 @Service //this annotation tells spring container to create the spring Bean of this class
 public class EmployeeServiceImpl implements EmployeeService {
 
     private  EmployeeRepository employeeRepository;
+    private long nextId = 1; // Initialize ID counter
 
 
     public EmployeeServiceImpl(EmployeeRepository employeeRepository,JdbcTemplate jdbcTemplate) {
@@ -29,6 +30,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     public EmployeeDto createEmployee(EmployeeDto employeeDto) {
 
         System.out.println("Employee created!!!!");
+        employeeDto.setId(nextId++);
         Employee employee = EmployeeMapper.mapToEmployee(employeeDto);
         Employee savedEmployee =  employeeRepository.save(employee);
 
@@ -43,20 +45,13 @@ public class EmployeeServiceImpl implements EmployeeService {
          return EmployeeMapper.mapToEmployeeDto(employee);
     }
 
-//    @Override
-//    public List<EmployeeDto> getAllEmployees() {
-//     List<Employee> employees =   employeeRepository.findAll();
-//        return employees.stream().map((employee) -> EmployeeMapper.mapToEmployeeDto(employee))
-//                .collect(Collectors.toList());
-//    }
-
     @Override
     public List<EmployeeDto> getAllEmployees() {
-        List<Employee> employees = employeeRepository.findAll();
-        return employees.stream()
-                .map(EmployeeMapper::mapToEmployeeDto)
-                .toList();
+     List<Employee> employees =   employeeRepository.findAll();
+        return employees.stream().map((employee) -> EmployeeMapper.mapToEmployeeDto(employee))
+                .collect(Collectors.toList());
     }
+
 
 
     @Override
@@ -77,10 +72,13 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public void deleteEmployee(long employeeId) {
         System.out.println("Employee deleted!!!!");
-
         Employee employee = employeeRepository.findById(employeeId).orElseThrow(
                 () -> new ResourceNotFoundException("Employee is not exist with given id : " + employeeId)
         );
         employeeRepository.deleteById(employeeId);
+
+        if (employee.getId() == nextId - 1) {
+            nextId--;
+        }
     }
 }
